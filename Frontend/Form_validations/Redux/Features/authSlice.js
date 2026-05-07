@@ -1,25 +1,24 @@
-import { createSlice, createAsyncThunk, nanoid } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import base_url from "../../base_url";
 import axios from "axios";
 const initialState = {
   user: null,
-  isAuth: false,
   isLoading: false,
   status: "idle",
   isError: null,
 };
 
-export const loginRequest = createAsyncThunk(
+export const registerRequest = createAsyncThunk(
   "login-request",
   async (data, { rejectWithValue }) => {
     try {
-        console.log("data",data)
-      const res = await axios.post(`${base_url}/user/verify`, data);
+      const res = await axios.post(`${base_url}/user/register`, data);
       return res.data;
     } catch (error) {
-     return   rejectWithValue(
-        error.response?.data || `api end point is not correct for verifying user or login ...`
-     )
+      return rejectWithValue(
+        error.response?.data ||
+          `api end point is not correct for verifying user or login ...`,
+      );
     }
   },
 );
@@ -29,10 +28,19 @@ const authSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(loginRequest.fulfilled, (state, action) => {
-      state.isAuth = true;
+    builder.addCase(registerRequest.pending, (state) => {
+      state.isLoading = true;
+      state.status = "pending ...";
+    });
+    builder.addCase(registerRequest.fulfilled, (state, action) => {
       state.status = "success";
       state.user = action.payload;
+      state.isLoading = false;
+    });
+    builder.addCase(registerRequest.rejected, (state) => {
+      state.status = "rejected ...";
+      state.isError = "Error in loging user promise rejected...";
+      state.isLoading = false;
     });
   },
 });

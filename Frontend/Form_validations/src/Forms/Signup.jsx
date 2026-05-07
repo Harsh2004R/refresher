@@ -1,7 +1,13 @@
 import { Center, Box, Text, Input, Field, Button } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
-
+import { useDispatch, useSelector } from "react-redux";
+import { registerRequest } from "../../Redux/Features/authSlice";
 function Signup() {
+  const dispatch = useDispatch();
+  const { user, isLoading, status } = useSelector(
+    (state) => state.auth,
+  );
+  console.log(user, "loading -",isLoading, status);
   const {
     register,
     handleSubmit,
@@ -13,10 +19,22 @@ function Signup() {
       ...data,
       phone: Number(data.phone),
     };
-    console.log(formatedData);
+    // console.log(formatedData);
+    dispatch(registerRequest(formatedData));
   };
 
+
+  if(isLoading){
+    return (
+      <Center w="1005" h="50vh" bg="grey" >
+
+        <Text color={"#fff"}>Loading...</Text>
+      </Center>
+    )
+  }
   return (
+
+
     <Center flexDirection={"column"} w="100%" h="100vh" bg="#ebebeb">
       <Text textAlign={"center"} color="#000" fontSize="3xl">
         Login
