@@ -1,11 +1,11 @@
-import React from "react";
-import Login from "./Forms/Login";
+import { BrowserRouter } from "react-router-dom";
+import PrivateRoutes from "../Routes/PrivateRoutes";
 
 function App() {
   return (
-    <>
-      <Login />
-    </>
+    <BrowserRouter>
+      <PrivateRoutes />
+    </BrowserRouter>
   );
 }
 
