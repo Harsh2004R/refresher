@@ -1,5 +1,6 @@
 import { Center, Box, Text, Input, Field, Button } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
+
 function Signup() {
   const {
     register,
@@ -8,7 +9,11 @@ function Signup() {
   } = useForm();
 
   const handleSignup = (data) => {
-    console.log(data);
+    const formatedData = {
+      ...data,
+      phone: Number(data.phone),
+    };
+    console.log(formatedData);
   };
 
   return (
@@ -25,11 +30,7 @@ function Signup() {
       >
         <form onSubmit={handleSubmit(handleSignup)}>
           <Field.Root required>
-            
-
-
-
-<Field.Label color="#000">
+            <Field.Label color="#000">
               First Name <Field.RequiredIndicator></Field.RequiredIndicator>
             </Field.Label>
             <Input
@@ -41,13 +42,6 @@ function Signup() {
               type="text"
               w="100%"
             />
-           
-
-
-
-
-
-
 
             <Field.Label color="#000">
               Last Name<Field.RequiredIndicator></Field.RequiredIndicator>
@@ -61,14 +55,7 @@ function Signup() {
               type="text"
               w="100%"
             />
-          
 
-
-
-
-
-            
-            
             <Field.Label color="#000">
               Email <Field.RequiredIndicator></Field.RequiredIndicator>
             </Field.Label>
@@ -90,34 +77,26 @@ function Signup() {
               {errors.email?.message}
             </Text>
 
-
-
-
-
- <Field.Label color="#000">
+            <Field.Label color="#000">
               Phone <Field.RequiredIndicator></Field.RequiredIndicator>
             </Field.Label>
             <Input
               {...register("phone", {
                 required: "phone number must required",
                 pattern: {
-                  value: /^\S+@\S+$/i,
-                  message: "Phone Number must be 10 digit number ...",
+                  value: /^[0-9]{10}$/,
+                  message: "Phone number must be exactly 10 digits",
                 },
               })}
               color={"#000"}
               placeholder="Enter your mail"
-              type="text"
+              type="number"
               w="100%"
             />
             <Text fontSize="10px" color={"#eba626"}>
               {" "}
               {errors.phone?.message}
             </Text>
-
-
-
-
 
             <Field.Label color="#000">
               Password <Field.RequiredIndicator></Field.RequiredIndicator>
