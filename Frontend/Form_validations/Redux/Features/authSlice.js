@@ -2,17 +2,36 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import base_url from "../../base_url";
 import axios from "axios";
 const initialState = {
-  user: null,
+  user: JSON.parse(localStorage.getItem("user")) || null,
+  auth: JSON.parse(localStorage.getItem("auth")) || false,
   isLoading: false,
   status: "idle",
   isError: null,
 };
 
 export const registerRequest = createAsyncThunk(
-  "login-request",
+  "singup-request",
   async (data, { rejectWithValue }) => {
     try {
       const res = await axios.post(`${base_url}/user/register`, data);
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data ||
+          `api end point is not correct for registering user or signup ...`,
+      );
+    }
+  },
+);
+
+export const loginRequest = createAsyncThunk(
+  "login-request",
+  async (data, { rejectWithValue }) => {
+    try {
+      const res = await axios.post(`${base_url}/user/verify`, data);
+       if(res.status === 201){
+        window.location.href="/"
+      }
       return res.data;
     } catch (error) {
       return rejectWithValue(
@@ -30,20 +49,39 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(registerRequest.pending, (state) => {
       state.isLoading = true;
-      state.status = "pending ...";
+      state.status = "loading";
     });
     builder.addCase(registerRequest.fulfilled, (state, action) => {
       state.status = "success";
       state.user = action.payload;
       state.isLoading = false;
     });
-    builder.addCase(registerRequest.rejected, (state) => {
-      state.status = "rejected ...";
-      state.isError = "Error in loging user promise rejected...";
+    builder.addCase(registerRequest.rejected, (state, action) => {
+      state.status = "failed";
+      state.isError =
+        action.payload || "Error in loging user promise rejected...";
+      state.isLoading = false;
+    });
+
+    // login reducers ...
+    builder.addCase(loginRequest.pending, (state, action) => {
+      state.isLoading = true;
+      state.status = "loading";
+    });
+    builder.addCase(loginRequest.fulfilled, (state, action) => {
+      state.status = "success";
+      state.user = action.payload;
+      state.auth = true;
+      localStorage.setItem("auth",JSON.stringify(state.auth));
+      state.isLoading = false;
+    });
+    builder.addCase(loginRequest.rejected, (state, action) => {
+      state.status = "failed";
+      state.isError =
+        action.payload || "Error in loging user promise rejected...";
       state.isLoading = false;
     });
   },
 });
 
-// export const {} = authSlice.actions;
 export default authSlice.reducer;

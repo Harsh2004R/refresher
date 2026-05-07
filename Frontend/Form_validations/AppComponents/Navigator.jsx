@@ -1,11 +1,19 @@
 import { Flex, Box, Text } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+
 function Navigator() {
+  const { auth } = useSelector((state) => state.auth);
+  console.log("auth", auth);
   const navItems = [
     { page: "Home", link: "/" },
     { page: "Products", link: "/products" },
-    { page: "Login", link: "/login" },
-    { page: "Signup", link: "/signup" },
+    ...(!auth
+      ? [
+          { page: "Login", link: "/login" },
+          // { page: "Signup", link: "/signup" },
+        ]
+      : [ { page: "Logout", link: "/signup" },]),
   ];
 
   return (

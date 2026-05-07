@@ -1,19 +1,45 @@
 import React from "react";
 import { Center, Box, Text, Input, Field, Button } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { loginRequest } from "../../Redux/Features/authSlice";
+
 function Login() {
+  const dispatch = useDispatch();
+
+  const { isLoading, user } = useSelector((state) => state.auth);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  //   function handleLogin(data) {
-  //     console.log(data);
-  //   }
-  const handleLogin = (data) => {
-    console.log(data);
-  };
 
+  const handleLogin = async (data) => {
+    try {
+      const res = await dispatch(loginRequest(data)).unwrap();
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          token: res.user.token,
+          email: res.user.email,
+          id: res.user.userId,
+        }),
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  // console.log(user.token)
+
+
+  if (isLoading) {
+    return (
+      <Center w="1005" h="50vh" bg="grey">
+        <Text color={"#fff"}>Loading...</Text>
+      </Center>
+    );
+  }
   return (
     <Center flexDirection={"column"} w="100%" h="100vh" bg="#ebebeb">
       <Text textAlign={"center"} color="#000" fontSize="3xl">
@@ -52,10 +78,14 @@ function Login() {
               Password <Field.RequiredIndicator></Field.RequiredIndicator>
             </Field.Label>
             <Input
-              {...register("password", { required: "password must required" ,pattern:{
-                value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/,
-                message:"Password must inclue 1 lower case 1 upper case and atleast length of 6-8 characters..."
-              }})}
+              {...register("password", {
+                required: "password must required",
+                pattern: {
+                  value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/,
+                  message:
+                    "Password must inclue 1 lower case 1 upper case and atleast length of 6-8 characters...",
+                },
+              })}
               placeholder="Enter your password"
               color={"#000"}
               type="password"
@@ -65,17 +95,18 @@ function Login() {
               {errors.password?.message}
             </Text>
           </Field.Root>
-
-          <Button
-            type="submit"
-            mt="20px"
-            mb="20px"
-            w="100%"
-            bgColor="#38a0ea"
-            color="#fff"
-          >
-            Submit
-          </Button>
+         
+            <Button
+              type="submit"
+              mt="20px"
+              mb="20px"
+              w="100%"
+              bgColor="#38a0ea"
+              color="#fff"
+            >
+              Submit
+            </Button>
+         
         </form>
       </Box>
     </Center>
