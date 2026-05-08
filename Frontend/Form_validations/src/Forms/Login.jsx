@@ -2,11 +2,12 @@ import React from "react";
 import { Center, Box, Text, Input, Field, Button } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { loginRequest } from "../../Redux/Features/authSlice";
 
 function Login() {
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const { isLoading, user } = useSelector((state) => state.auth);
 
   const {
@@ -17,13 +18,12 @@ function Login() {
 
   const handleLogin = async (data) => {
     try {
-      const res = await dispatch(loginRequest(data)).unwrap();
+      const res = await dispatch(loginRequest({data, navigate})).unwrap();
       localStorage.setItem(
         "user",
         JSON.stringify({
-          token: res.user.token,
-          email: res.user.email,
-          id: res.user.userId,
+          token: res.token,
+        
         }),
       );
     } catch (error) {
@@ -31,7 +31,6 @@ function Login() {
     }
   };
   // console.log(user.token)
-
 
   if (isLoading) {
     return (
@@ -95,18 +94,17 @@ function Login() {
               {errors.password?.message}
             </Text>
           </Field.Root>
-         
-            <Button
-              type="submit"
-              mt="20px"
-              mb="20px"
-              w="100%"
-              bgColor="#38a0ea"
-              color="#fff"
-            >
-              Submit
-            </Button>
-         
+
+          <Button
+            type="submit"
+            mt="20px"
+            mb="20px"
+            w="100%"
+            bgColor="#38a0ea"
+            color="#fff"
+          >
+            Submit
+          </Button>
         </form>
       </Box>
     </Center>

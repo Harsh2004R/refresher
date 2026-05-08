@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import base_url from "../../base_url";
 import axios from "axios";
+
 const initialState = {
   user: JSON.parse(localStorage.getItem("user")) || null,
   auth: JSON.parse(localStorage.getItem("auth")) || false,
@@ -26,14 +27,17 @@ export const registerRequest = createAsyncThunk(
 
 export const loginRequest = createAsyncThunk(
   "login-request",
-  async (data, { rejectWithValue }) => {
+  async ({ data, navigate }, { rejectWithValue }) => {
     try {
       const res = await axios.post(`${base_url}/user/verify`, data);
-       if(res.status === 201){
-        window.location.href="/"
+      if (res.status === 201) {
+        navigate("/");
       }
+      console.log(res);
+
       return res.data;
     } catch (error) {
+      console.log("error -----", error);
       return rejectWithValue(
         error.response?.data ||
           `api end point is not correct for verifying user or login ...`,
@@ -72,7 +76,7 @@ const authSlice = createSlice({
       state.status = "success";
       state.user = action.payload;
       state.auth = true;
-      localStorage.setItem("auth",JSON.stringify(state.auth));
+      localStorage.setItem("auth", JSON.stringify(state.auth));
       state.isLoading = false;
     });
     builder.addCase(loginRequest.rejected, (state, action) => {

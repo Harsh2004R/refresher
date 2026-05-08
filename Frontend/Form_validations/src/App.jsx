@@ -1,10 +1,10 @@
 import { BrowserRouter } from "react-router-dom";
-import PrivateRoutes from "../Routes/PrivateRoutes";
+import Public from "./Routes/Public.jsx";
 
 function App() {
   return (
     <BrowserRouter>
-      <PrivateRoutes />
+      <Public />
     </BrowserRouter>
   );
 }
