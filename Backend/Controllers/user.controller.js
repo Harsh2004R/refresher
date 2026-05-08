@@ -77,4 +77,6 @@ export const verifyUser = async (req, res) => {
   }
 };
 
-export const getUserInfo = async (req, res) => {};
+export const getUserInfo = async (req, res) => {
+  return res.status(200).json({ message: "getting user info ..." });
+};
