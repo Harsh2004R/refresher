@@ -53,17 +53,20 @@ export const verifyUser = async (req, res) => {
     return res.status(400).json({ message: "Incorrect password ..." });
   }
   // Creating a JWT token
-  const token = jwt.sign({ userID: user._id }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
-  });
+  const token = jwt.sign(
+    {
+      userId: user._id,
+      email: user.email,
+      role: user.role,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "7d",
+    },
+  );
   res.status(201).json({
     message: "user verifyed ...",
-    user: {
-      userId: user._id,
-      token,
-      email,
-      //role
-    },
+    token,
   });
 
   try {
